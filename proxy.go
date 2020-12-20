@@ -31,6 +31,8 @@ type ProxyHttpServer struct {
 	ConnectDial func(network string, addr string) (net.Conn, error)
 	CertStore   CertStorage
 	KeepHeader  bool
+
+	WriteCustomConnectHeaders func(w io.Writer)
 }
 
 var hasPort = regexp.MustCompile(`:\d+$`)

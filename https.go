@@ -112,7 +112,13 @@ func (proxy *ProxyHttpServer) handleHttps(w http.ResponseWriter, r *http.Request
 			return
 		}
 		ctx.Logf("Accepting CONNECT to %s", host)
-		proxyClient.Write([]byte("HTTP/1.0 200 OK\r\n\r\n"))
+		if proxy.WriteCustomConnectHeaders == nil {
+			proxyClient.Write([]byte("HTTP/1.0 200 OK\r\n\r\n"))
+		} else {
+			proxyClient.Write([]byte("HTTP/1.0 200 OK\r\n"))
+			proxy.WriteCustomConnectHeaders(proxyClient)
+			proxyClient.Write([]byte("\r\n"))
+		}
 
 		targetTCP, targetOK := targetSiteCon.(halfClosable)
 		proxyClientTCP, clientOK := proxyClient.(halfClosable)
